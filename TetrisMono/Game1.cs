@@ -1,83 +1,94 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Xml.Schema;
+using TetrisLibrary;
 
 namespace TetrisMono
-{
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
+{    
     public class Game1 : Game
     {
+        const int fieldHeight = 800;
+        const int fieldWidth = 400;
+        const int space = 25;
+        const int nextBlockSize = 100;
+        const int startingY = 150;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D gameField;
+        Texture2D gameBackground;
+        Texture2D nextBlock;        
+        SpriteFont gameFont;
 
+        BlockModel activeBlock;
+        BlockManager blockManager;
+        public int Score { get; set; }
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferHeight = 975;
+            graphics.PreferredBackBufferWidth = 450;
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
+        
         protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
-
+        {       
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
+        
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            gameField = Content.Load<Texture2D>("gameField-sprite");
+            gameBackground = Content.Load<Texture2D>("gameBackground-sprite");
+            nextBlock = Content.Load<Texture2D>("nextBlock-sprite");
+            Texture2D squareBlock = Content.Load<Texture2D>("squareBlock-sprite");
+            Texture2D longBlock = Content.Load<Texture2D>("longBlock-sprite");
+            Texture2D tShape = Content.Load<Texture2D>("TShape-sprite");
+            Texture2D leftLShape = Content.Load<Texture2D>("leftLShape-sprite");
+            Texture2D rightLShape = Content.Load<Texture2D>("rightLShape-sprite");
+            Texture2D leftZShape = Content.Load<Texture2D>("leftZShape-sprite");
+            Texture2D rightZShape = Content.Load<Texture2D>("rightZShape-sprite");
+            gameFont = Content.Load<SpriteFont>("game-font");
+            blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY, squareBlock, longBlock, tShape, leftLShape, rightLShape, leftZShape, rightZShape);
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// game-specific content.
-        /// </summary>
+        
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
+            if (activeBlock == null)
+                activeBlock = blockManager.GenerateRandomBlock();
+            activeBlock.MoveDown();
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
+            DrawField();
+            spriteBatch.DrawString(gameFont, $"Score: {Score}", new Vector2(25,25),Color.White);
+            spriteBatch.Draw(activeBlock.Sprite, new Vector2(activeBlock.X, activeBlock.Y), Color.White);
+            spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void DrawField()
+        {
+            spriteBatch.Draw(gameBackground, new Rectangle { X = 0, Y = 0, Width = graphics.PreferredBackBufferWidth, Height = graphics.PreferredBackBufferHeight }, Color.White);   
+            spriteBatch.Draw(gameField, new Rectangle { X = space, Y = nextBlockSize + 2*space, Width = fieldWidth, Height = fieldHeight }, Color.White);
+            spriteBatch.Draw(nextBlock, new Rectangle { X = graphics.PreferredBackBufferWidth- nextBlockSize-space, Y = space, Width = nextBlockSize, Height = nextBlockSize }, Color.White);
         }
     }
 }
