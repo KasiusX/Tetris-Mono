@@ -45,14 +45,9 @@
   <ItemGroup>
     <Compile Include="BlockManager.cs" />
     <Compile Include="BlockModel.cs" />
-    <Compile Include="Blocks\LeftLShapeBlock.cs" />
-    <Compile Include="Blocks\LeftZShapeBlock.cs" />
-    <Compile Include="Blocks\LongBlock.cs" />
+    <Compile Include="BlockMovement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Blocks\RightLShapeBlock.cs" />
-    <Compile Include="Blocks\RightZShapeBlock.cs" />
-    <Compile Include="Blocks\SquareBlock.cs" />
-    <Compile Include="Blocks\TShapeBlock.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

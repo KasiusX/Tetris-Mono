@@ -44,19 +44,19 @@ namespace TetrisLibrary
             switch (choice)
             {
                 case '0':
-                    return new SquareBlock(windowWidht, windowHeight, startingY, squareBlock);
+                    return new BlockModel(windowWidht, windowHeight, startingY, squareBlock,80,80);
                 case '1':
-                    return new LongBlock(windowWidht, windowWidht, startingY, longBlock);
+                    return new BlockModel(windowWidht, windowWidht, startingY, longBlock,40,200);
                 case '2':
-                    return new TShapeBlock(windowWidht, windowWidht, startingY, tShapeBlock);
+                    return new BlockModel(windowWidht, windowWidht, startingY, tShapeBlock,120,80);
                 case '3':
-                    return new LeftLShapeBlock(windowWidht, windowWidht, startingY, leftLShapeBlock);
+                    return new BlockModel(windowWidht, windowWidht, startingY, leftLShapeBlock,120,80);
                 case '4':
-                    return new RightLShapeBlock(windowWidht, windowWidht, startingY, rightLShapeBlock);
+                    return new BlockModel(windowWidht, windowWidht, startingY, rightLShapeBlock,120,80);
                 case '5':
-                    return new LeftZShapeBlock(windowWidht, windowWidht, startingY, leftZShapeBlock);
+                    return new BlockModel(windowWidht, windowWidht, startingY, leftZShapeBlock,120,80);
                 case '6':
-                    return new RightZShapeBlock(windowWidht, windowWidht, startingY, rightZShapeBlock);                
+                    return new BlockModel(windowWidht, windowWidht, startingY, rightZShapeBlock,120,80);                
                 default:
                     return null;
                     
