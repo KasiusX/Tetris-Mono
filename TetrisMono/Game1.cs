@@ -18,7 +18,8 @@ namespace TetrisMono
         SpriteBatch spriteBatch;
         Texture2D gameField;
         Texture2D gameBackground;
-        Texture2D nextBlock;        
+        Texture2D nextBlock;
+        Texture2D blockSprite;
         SpriteFont gameFont;
 
         BlockModel activeBlock;
@@ -53,15 +54,9 @@ namespace TetrisMono
             gameField = Content.Load<Texture2D>("gameField-sprite");
             gameBackground = Content.Load<Texture2D>("gameBackground-sprite");
             nextBlock = Content.Load<Texture2D>("nextBlock-sprite");
-            Texture2D squareBlock = Content.Load<Texture2D>("squareBlock-sprite");
-            Texture2D longBlock = Content.Load<Texture2D>("longBlock-sprite");
-            Texture2D tShape = Content.Load<Texture2D>("TShape-sprite");
-            Texture2D leftLShape = Content.Load<Texture2D>("leftLShape-sprite");
-            Texture2D rightLShape = Content.Load<Texture2D>("rightLShape-sprite");
-            Texture2D leftZShape = Content.Load<Texture2D>("leftZShape-sprite");
-            Texture2D rightZShape = Content.Load<Texture2D>("rightZShape-sprite");
+            blockSprite = Content.Load<Texture2D>("square-sprite");
             gameFont = Content.Load<SpriteFont>("game-font");
-            blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY, squareBlock, longBlock, tShape, leftLShape, rightLShape, leftZShape, rightZShape);
+            blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY);
             blockMovement = new BlockMovement();
             blockMovement.Moved += BlockMovement_Moved;
         }
@@ -109,11 +104,19 @@ namespace TetrisMono
 
             DrawField();
             spriteBatch.DrawString(gameFont, $"Score: {Score}", new Vector2(25,25),Color.White);
-            if(activeBlock != null)
-            spriteBatch.Draw(activeBlock.Sprite, new Vector2(activeBlock.X, activeBlock.Y), Color.White);
+            if (activeBlock != null)
+            {
+                foreach (var r in activeBlock.HitBox)
+                {
+                    spriteBatch.Draw(blockSprite, r, activeBlock.Color);
+                }
+            }
             foreach (BlockModel block in droppedBlocks)
             {
-                spriteBatch.Draw(block.Sprite, new Vector2(block.X, block.Y), Color.White);
+                foreach (var r in block.HitBox)
+                {
+                    spriteBatch.Draw(blockSprite, r, block.Color);
+                }
             }
 
             spriteBatch.End();
@@ -140,7 +143,7 @@ namespace TetrisMono
 
         private void CheckIfBlockIsDown()
         {
-            if (activeBlock.Y + activeBlock.Height == graphics.PreferredBackBufferHeight - 25)
+            if (activeBlock.CheckIfIsDown(graphics.PreferredBackBufferHeight))
             {
                 BlockModel droppedBlock = activeBlock;
                 droppedBlocks.Add(activeBlock);

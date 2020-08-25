@@ -69,6 +69,7 @@
     <None Include="Content\nextBlock-sprite.xnb" />
     <None Include="Content\rightLShape-sprite.xnb" />
     <None Include="Content\rightZShape-sprite.xnb" />
+    <None Include="Content\square-sprite.xnb" />
     <None Include="Content\squareBlock-sprite.xnb" />
     <None Include="Content\TShape-sprite.xnb" />
   </ItemGroup>

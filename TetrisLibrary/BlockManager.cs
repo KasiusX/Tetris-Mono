@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,50 +14,34 @@ namespace TetrisLibrary
         private readonly int windowWidht;
         private readonly int windowHeight;
         private readonly int startingY;
-        private readonly Texture2D squareBlock;
-        private readonly Texture2D longBlock;
-        private readonly Texture2D tShapeBlock;
-        private readonly Texture2D leftLShapeBlock;
-        private readonly Texture2D rightLShapeBlock;
-        private readonly Texture2D leftZShapeBlock;
-        private readonly Texture2D rightZShapeBlock;
         Random random = new Random();
+        HitboxManager manager = new HitboxManager();
 
-        public BlockManager(int windowWidht,int windowHeight, int startingY,
-            Texture2D squareBlock, Texture2D longBlock, Texture2D tShapeBlock, 
-            Texture2D leftLShapeBlock, Texture2D rightLShapeBlock, 
-            Texture2D leftZShapeBlock, Texture2D rightZShapeBlock)
+        public BlockManager(int windowWidht,int windowHeight, int startingY)
         {
             this.windowWidht = windowWidht;
             this.windowHeight = windowHeight;
             this.startingY = startingY;
-            this.squareBlock = squareBlock;
-            this.longBlock = longBlock;
-            this.tShapeBlock = tShapeBlock;
-            this.leftLShapeBlock = leftLShapeBlock;
-            this.rightLShapeBlock = rightLShapeBlock;
-            this.leftZShapeBlock = leftZShapeBlock;
-            this.rightZShapeBlock = rightZShapeBlock;
         }
         public BlockModel GenerateRandomBlock()
         {
-           char choice = char.Parse(random.Next(0,7).ToString());
+           char choice = char.Parse(random.Next(0,0).ToString());
             switch (choice)
             {
                 case '0':
-                    return new BlockModel(windowWidht, windowHeight, startingY, squareBlock,80,80);
+                    return new BlockModel(startingY,BlockType.leftLShape, Color.Orange,80,120);
                 case '1':
-                    return new BlockModel(windowWidht, windowWidht, startingY, longBlock,40,200);
+                    return new BlockModel(startingY, BlockType.rightLShape, Color.DarkGreen,80,120);
                 case '2':
-                    return new BlockModel(windowWidht, windowWidht, startingY, tShapeBlock,120,80);
+                    return new BlockModel(startingY, BlockType.leftZShape, Color.LimeGreen,120,80);
                 case '3':
-                    return new BlockModel(windowWidht, windowWidht, startingY, leftLShapeBlock,120,80);
+                    return new BlockModel(startingY, BlockType.rightZShape, Color.DarkRed, 120, 80);
                 case '4':
-                    return new BlockModel(windowWidht, windowWidht, startingY, rightLShapeBlock,120,80);
+                    return new BlockModel(startingY, BlockType.longBlock, Color.AliceBlue,40,160);
                 case '5':
-                    return new BlockModel(windowWidht, windowWidht, startingY, leftZShapeBlock,120,80);
+                    return new BlockModel(startingY, BlockType.squareBlock, Color.Yellow, 80, 80);
                 case '6':
-                    return new BlockModel(windowWidht, windowWidht, startingY, rightZShapeBlock,120,80);                
+                    return new BlockModel(startingY, BlockType.TShapeBlock, Color.Purple, 120, 80);                
                 default:
                     return null;
                     

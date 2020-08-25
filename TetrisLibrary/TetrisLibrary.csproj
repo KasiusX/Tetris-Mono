@@ -46,6 +46,8 @@
     <Compile Include="BlockManager.cs" />
     <Compile Include="BlockModel.cs" />
     <Compile Include="BlockMovement.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="HitboxManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Cache;
@@ -14,10 +16,10 @@ namespace TetrisLibrary
         public event EventHandler<string> Moved;
         public void CheckForMove(KeyboardState state, BlockModel block, bool moveLeft, bool moveRight, bool moveDown)
         {
-            if ((state.IsKeyDown(Keys.A) && block.X > 25) && moveLeft)
-            {
-                block.MoveLeft();
-                Moved.Invoke(this, "left");
+            if (state.IsKeyDown(Keys.A) && block.X > 25 && moveLeft)
+            {                
+                    block.MoveLeft();
+                    Moved.Invoke(this, "left");                
             }
             if ((state.IsKeyDown(Keys.D) && block.X + block.Width < 425) && moveRight)
             {
