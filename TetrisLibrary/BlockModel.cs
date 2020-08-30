@@ -53,6 +53,21 @@ namespace TetrisLibrary
             }
         }
 
+        public void MoveAbsoluteDown(List<BlockModel> droppedBlocks, int maxY)
+        {
+            bool canMove = true;
+            while(canMove)
+            {
+                if (Y + Height != maxY)
+                {
+                    Y += Speed;
+                    ChangeY(Speed);
+                }
+                else
+                    canMove = false;
+            }
+        }
+
         public void MoveRight(List<BlockModel> droppedBlocks)
         {
             if (CanMakeMove(droppedBlocks, Speed, 0))

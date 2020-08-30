@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Schema;
 using TetrisLibrary;
 
@@ -28,6 +29,7 @@ namespace TetrisMono
         BlockModel nextBlock;
         BlockManager blockManager;
         BlockMovement blockMovement;
+        RowsManager rowsManager;
 
         int secondOfMoveDown;
         bool moveRight = true;
@@ -62,6 +64,14 @@ namespace TetrisMono
             gameFont = Content.Load<SpriteFont>("game-font");
             blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY);
             blockMovement = new BlockMovement();
+            rowsManager = new RowsManager();
+            rowsManager.RowFilled += RowsManager_RowFilled;
+        }
+
+        private void RowsManager_RowFilled(object sender, int e)
+        {
+            Score += 1;
+            RemoveRow(e);
         }
 
         private void BlockMovement_Moved(object sender, string e)
@@ -93,15 +103,14 @@ namespace TetrisMono
                 secondOfMoveDown = gameTime.TotalGameTime.Seconds;
             }
 
-                           
-            blockMovement.CheckForMove(Keyboard.GetState(), activeBlock,droppedBlocks,moveLeft,moveRight,moveDown);
 
-            
-            blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, blockManager.manager, droppedBlocks);
+            CheckForPlayerMovement();
+
             CheckForBoolResetSides();
+
             CheckIfBlockIsDown();
 
-
+            
 
             base.Update(gameTime);
         }
@@ -109,6 +118,12 @@ namespace TetrisMono
         private void ActiveBlock_Stoped(object sender, System.EventArgs e)
         {
             NewBlock();
+        }
+
+        private void CheckForPlayerMovement()
+        {
+            blockMovement.CheckForMove(Keyboard.GetState(), activeBlock, droppedBlocks, moveLeft, moveRight, moveDown);
+            blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, blockManager.manager, droppedBlocks);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -171,8 +186,8 @@ namespace TetrisMono
         {
             if (activeBlock != null)
             {
-                BlockModel droppedBlock = activeBlock;
                 droppedBlocks.Add(activeBlock);
+                rowsManager.AddBlock(activeBlock);
             }
             else
             {
@@ -186,6 +201,8 @@ namespace TetrisMono
             nextBlock = blockManager.GenerateRandomBlock();
             nextBlock.ChangePositionOn(graphics.PreferredBackBufferWidth - nextBlockSize - space, space);
             SetNextSprite(nextBlock.Type);
+
+            
         }        
 
         private void ActiveBlock_Rotated(object sender, System.EventArgs e)
@@ -222,5 +239,59 @@ namespace TetrisMono
                     break;
             }
         }
+
+        private void RemoveRow(int rowNumber)
+        {
+            int y = (rowNumber-1) * 40 + 150;
+            List<Rectangle> recToDelete = new List<Rectangle>();
+            foreach (BlockModel block in droppedBlocks)
+            {
+                foreach (Rectangle rec in block.HitBox)
+                {
+                    if (rec.Y == y)
+                        recToDelete.Add(rec);
+                }
+                foreach (Rectangle rec in recToDelete)
+                {
+                    block.HitBox.Remove(rec);
+                    recToDelete = new List<Rectangle>();
+                }
+            }
+            ClearDroppedBlocks();
+            MoveBlocksDown(y);
+        }
+
+        private void MoveBlocksDown(int y)
+        {
+            //List<Rectangle> recToMoveDown;
+            //for (int i = 0; i < droppedBlocks.Count; i++)
+            //{
+            //    for (int ir = 0; ir < droppedBlocks[i].HitBox.Count; ir++)
+            //    {
+            //        recToMoveDown = droppedBlocks[i].HitBox.Where(x => x.Y <= y).ToList();
+            //    }   
+            //}
+
+            for (int i = 0; i < droppedBlocks.Count; i++)            
+            {
+                if (droppedBlocks[i].Y < y)
+                    droppedBlocks[i].MoveDown(droppedBlocks);
+            }
+            rowsManager.ResetRows(droppedBlocks);
+        }
+        private void ClearDroppedBlocks()
+        {
+            List<BlockModel> blocksToRemove = new List<BlockModel>();
+            foreach (BlockModel block in droppedBlocks)
+            {
+                if (block.HitBox.Count == 0)
+                    blocksToRemove.Add(block);
+            }
+            foreach (BlockModel block in blocksToRemove)
+            {
+                droppedBlocks.Remove(block);
+            }
+        }
+
     }
 }

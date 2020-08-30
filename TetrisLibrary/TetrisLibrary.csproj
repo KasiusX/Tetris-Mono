@@ -49,6 +49,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="HitboxManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RowsManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
