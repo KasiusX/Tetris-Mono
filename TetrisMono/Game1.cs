@@ -125,10 +125,7 @@ namespace TetrisMono
             {
                 DrawBlock(block);
             }
-            //potřebuje zmenšit
-            spriteBatch.Draw(nextBlockSprite, new Vector2(graphics.PreferredBackBufferWidth - nextBlockSize - 25 + 20, space + 20),Color.White);
-            //změní tvar
-            //spriteBatch.Draw(nextBlockSprite,new Rectangle(graphics.PreferredBackBufferWidth - nextBlockSize - 25 + 20, space + 20,nextBlock.Width-40, nextBlock.Height-40), Color.White);
+            spriteBatch.Draw(nextBlockSprite, new Rectangle(graphics.PreferredBackBufferWidth - space - nextBlockSize+5 , space+5 , nextBlockSize-10, nextBlockSize-10 ), nextBlock.Color);
 
             spriteBatch.End();
 
