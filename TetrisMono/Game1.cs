@@ -274,8 +274,7 @@ namespace TetrisMono
 
             for (int i = 0; i < droppedBlocks.Count; i++)            
             {
-                if (droppedBlocks[i].Y < y)
-                    droppedBlocks[i].MoveDown(droppedBlocks);
+                droppedBlocks[i].MoveDownRectangle(y);
             }
             rowsManager.ResetRows(droppedBlocks);
         }

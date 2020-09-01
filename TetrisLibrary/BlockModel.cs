@@ -231,6 +231,23 @@ namespace TetrisLibrary
             else
                 RotatinForm -= 1;
         }
+
+        public void MoveDownRectangle(int y)
+        {
+            List<Rectangle> recToMove = new List<Rectangle>();
+            foreach (Rectangle rectangle in HitBox)
+            {
+                if (rectangle.Y < y)
+                    recToMove.Add(rectangle);
+            }
+            foreach (Rectangle rectangle1 in recToMove)
+            {
+                HitBox.Remove(rectangle1);
+                Rectangle rec = rectangle1;
+                rec.Y += 40;
+                HitBox.Add(rec);
+            }
+        }
         
     }
 }
