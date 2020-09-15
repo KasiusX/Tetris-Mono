@@ -12,6 +12,7 @@ namespace TetrisLibrary
     {
         public int[] RowCounts { get; set; } = new int[20];
         public event EventHandler<int> RowFilled;
+        public event EventHandler GameEnded;
 
         public RowsManager()
         {
@@ -49,6 +50,7 @@ namespace TetrisLibrary
             }
             if(checkForCompleteRow)
             CheckForCompleteRow();
+            CheckForEnd();
         }
 
         public void ResetRows(List<BlockModel> blocks)
@@ -58,6 +60,12 @@ namespace TetrisLibrary
             {
                 AddBlock(block, false);
             }
+        }
+
+        private void CheckForEnd()
+        {
+            if (RowCounts[0] > 0)
+                GameEnded.Invoke(this, EventArgs.Empty);
         }
     }
 }

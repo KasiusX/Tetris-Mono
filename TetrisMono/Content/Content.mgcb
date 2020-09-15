@@ -145,6 +145,13 @@
 /processorParam:TextureFormat=Color
 /build:../../Resoucers/nextBlock-sprite.png;nextBlock-sprite.png
 
+#begin EndGameFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:EndGameFont.spritefont
+
 #begin game-font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

@@ -4,11 +4,12 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Xml.Schema;
 using TetrisLibrary;
 
 namespace TetrisMono
-{    
+{
     public class Game1 : Game
     {
         const int fieldHeight = 800;
@@ -24,6 +25,7 @@ namespace TetrisMono
         Texture2D nextBlockSprite;
         Texture2D blockSprite;
         SpriteFont gameFont;
+        SpriteFont endGameFont;
 
         BlockModel activeBlock;
         BlockModel nextBlock;
@@ -36,6 +38,8 @@ namespace TetrisMono
         bool moveLeft = true;
         bool moveDown = true;
         bool rotate = true;
+        bool end = false;
+        bool restart = false;
         public int Score { get; set; }
 
         List<BlockModel> droppedBlocks = new List<BlockModel>();
@@ -47,13 +51,13 @@ namespace TetrisMono
             graphics.PreferredBackBufferWidth = 450;
         }
 
-        
+
         protected override void Initialize()
-        {       
+        {
             base.Initialize();
         }
 
-        
+
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -62,10 +66,17 @@ namespace TetrisMono
             nextBlockFieldSprite = Content.Load<Texture2D>("nextBlock-sprite");
             blockSprite = Content.Load<Texture2D>("square-sprite");
             gameFont = Content.Load<SpriteFont>("game-font");
+            endGameFont = Content.Load<SpriteFont>("EndGameFont");
             blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY);
             blockMovement = new BlockMovement();
             rowsManager = new RowsManager();
             rowsManager.RowFilled += RowsManager_RowFilled;
+            rowsManager.GameEnded += RowsManager_GameEnded;
+        }
+
+        private void RowsManager_GameEnded(object sender, EventArgs e)
+        {
+            end = true;
         }
 
         private void RowsManager_RowFilled(object sender, int e)
@@ -86,31 +97,37 @@ namespace TetrisMono
 
         protected override void UnloadContent()
         {
-            
+
         }
 
-        
+
         protected override void Update(GameTime gameTime)
         {
-            if (activeBlock == null)
+            if (!end)
             {
-                NewBlock();
+                if (activeBlock == null)
+                {
+                    NewBlock();
 
+                }
+                if (secondOfMoveDown != gameTime.TotalGameTime.Seconds)
+                {
+                    activeBlock.MoveDown(droppedBlocks);
+                    secondOfMoveDown = gameTime.TotalGameTime.Seconds;
+                }
+
+
+                CheckForPlayerMovement();
+                                
+
+                CheckIfBlockIsDown();
             }
-            if (secondOfMoveDown != gameTime.TotalGameTime.Seconds)
+            else
             {
-                activeBlock.MoveDown(droppedBlocks);
-                secondOfMoveDown = gameTime.TotalGameTime.Seconds;
+                CheckForRestart();
             }
 
-
-            CheckForPlayerMovement();
-
-            CheckForBoolResetSides();
-
-            CheckIfBlockIsDown();
-
-            
+            CheckForResetBools();
 
             base.Update(gameTime);
         }
@@ -131,7 +148,8 @@ namespace TetrisMono
             spriteBatch.Begin();
 
             DrawField();
-            spriteBatch.DrawString(gameFont, $"Score: {Score}", new Vector2(25,25),Color.White);
+            spriteBatch.DrawString(gameFont, $"Score: {Score}", new Vector2(25, 25), Color.White);
+
             if (activeBlock != null)
             {
                 DrawBlock(activeBlock);
@@ -140,7 +158,14 @@ namespace TetrisMono
             {
                 DrawBlock(block);
             }
-            spriteBatch.Draw(nextBlockSprite, new Rectangle(graphics.PreferredBackBufferWidth - space - nextBlockSize+5 , space+5 , nextBlockSize-10, nextBlockSize-10 ), nextBlock.Color);
+            spriteBatch.Draw(nextBlockSprite, new Rectangle(graphics.PreferredBackBufferWidth - space - nextBlockSize + 5, space + 5, nextBlockSize - 10, nextBlockSize - 10), nextBlock.Color);
+
+            if (end)
+            {
+                spriteBatch.DrawString(endGameFont, "GAME OVER", new Vector2(60, 360), Color.Black);
+                spriteBatch.DrawString(endGameFont, $"Score: {Score}", new Vector2(60, 410), Color.Black);
+                spriteBatch.DrawString(gameFont, "(press enter to restart)", new Vector2(60, 460), Color.Black);
+            }
 
             spriteBatch.End();
 
@@ -157,12 +182,12 @@ namespace TetrisMono
 
         private void DrawField()
         {
-            spriteBatch.Draw(gameBackground, new Rectangle { X = 0, Y = 0, Width = graphics.PreferredBackBufferWidth, Height = graphics.PreferredBackBufferHeight }, Color.White);   
-            spriteBatch.Draw(gameField, new Rectangle { X = space, Y = nextBlockSize + 2*space, Width = fieldWidth, Height = fieldHeight }, Color.White);
-            spriteBatch.Draw(nextBlockFieldSprite, new Rectangle { X = graphics.PreferredBackBufferWidth- nextBlockSize-space, Y = space, Width = nextBlockSize, Height = nextBlockSize }, Color.White);
+            spriteBatch.Draw(gameBackground, new Rectangle { X = 0, Y = 0, Width = graphics.PreferredBackBufferWidth, Height = graphics.PreferredBackBufferHeight }, Color.White);
+            spriteBatch.Draw(gameField, new Rectangle { X = space, Y = nextBlockSize + 2 * space, Width = fieldWidth, Height = fieldHeight }, Color.White);
+            spriteBatch.Draw(nextBlockFieldSprite, new Rectangle { X = graphics.PreferredBackBufferWidth - nextBlockSize - space, Y = space, Width = nextBlockSize, Height = nextBlockSize }, Color.White);
         }
 
-        private void CheckForBoolResetSides()
+        private void CheckForResetBools()
         {
             if (!Keyboard.GetState().IsKeyDown(Keys.A))
                 moveLeft = true;
@@ -172,6 +197,8 @@ namespace TetrisMono
                 moveDown = true;
             if (!Keyboard.GetState().IsKeyDown(Keys.W))
                 rotate = true;
+            if (!Keyboard.GetState().IsKeyDown(Keys.Enter))
+                restart = true;
         }
 
         private void CheckIfBlockIsDown()
@@ -202,8 +229,8 @@ namespace TetrisMono
             nextBlock.ChangePositionOn(graphics.PreferredBackBufferWidth - nextBlockSize - space, space);
             SetNextSprite(nextBlock.Type);
 
-            
-        }        
+
+        }
 
         private void ActiveBlock_Rotated(object sender, System.EventArgs e)
         {
@@ -242,7 +269,7 @@ namespace TetrisMono
 
         private void RemoveRow(int rowNumber)
         {
-            int y = (rowNumber-1) * 40 + 150;
+            int y = (rowNumber - 1) * 40 + 150;
             List<Rectangle> recToDelete = new List<Rectangle>();
             foreach (BlockModel block in droppedBlocks)
             {
@@ -272,7 +299,7 @@ namespace TetrisMono
             //    }   
             //}
 
-            for (int i = 0; i < droppedBlocks.Count; i++)            
+            for (int i = 0; i < droppedBlocks.Count; i++)
             {
                 droppedBlocks[i].MoveDownRectangle(y);
             }
@@ -290,6 +317,20 @@ namespace TetrisMono
             {
                 droppedBlocks.Remove(block);
             }
+        }
+
+        private void CheckForRestart()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                Restart();
+        }
+
+        private void Restart()
+        {
+            NewBlock();
+            Score = 0;
+            droppedBlocks = new List<BlockModel>();
+            end = false;
         }
 
     }
