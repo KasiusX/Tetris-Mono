@@ -39,6 +39,7 @@ namespace TetrisMono
         bool moveDown = true;
         bool rotate = true;
         bool end = false;
+        bool dropDown = true;
         bool restart = false;
         public int Score { get; set; }
 
@@ -92,7 +93,10 @@ namespace TetrisMono
             else if (e == "right")
                 moveRight = false;
             else if (e == "down")
+            {
                 moveDown = false;
+                dropDown = false;
+            }
         }
 
         protected override void UnloadContent()
@@ -119,7 +123,7 @@ namespace TetrisMono
 
                 CheckForPlayerMovement();
                                 
-
+                
                 CheckIfBlockIsDown();
             }
             else
@@ -135,12 +139,14 @@ namespace TetrisMono
         private void ActiveBlock_Stoped(object sender, System.EventArgs e)
         {
             NewBlock();
+            rowsManager.CheckForEnd();
         }
 
         private void CheckForPlayerMovement()
         {
             blockMovement.CheckForMove(Keyboard.GetState(), activeBlock, droppedBlocks, moveLeft, moveRight, moveDown);
             blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, blockManager.manager, droppedBlocks);
+            blockMovement.CheckForAbsoluteDown(Keyboard.GetState(), activeBlock, dropDown, droppedBlocks);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -199,6 +205,8 @@ namespace TetrisMono
                 rotate = true;
             if (!Keyboard.GetState().IsKeyDown(Keys.Enter))
                 restart = true;
+            if (!Keyboard.GetState().IsKeyDown(Keys.Space))
+                dropDown = true;
         }
 
         private void CheckIfBlockIsDown()
@@ -331,6 +339,7 @@ namespace TetrisMono
             Score = 0;
             droppedBlocks = new List<BlockModel>();
             end = false;
+            rowsManager.EmptyRowCounts();
         }
 
     }

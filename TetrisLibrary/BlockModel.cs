@@ -39,6 +39,7 @@ namespace TetrisLibrary
             HitboxManager manager = new HitboxManager();
             HitBox = manager.GetHitBoxes(this);
         }
+
         public void MoveDown(List<BlockModel> droppedBlocks)
         {
             if (CanMakeMove(droppedBlocks,0, Speed))
@@ -51,22 +52,7 @@ namespace TetrisLibrary
             {
                 Stoped.Invoke(this, EventArgs.Empty);
             }
-        }
-
-        public void MoveAbsoluteDown(List<BlockModel> droppedBlocks, int maxY)
-        {
-            bool canMove = true;
-            while(canMove)
-            {
-                if (Y + Height != maxY)
-                {
-                    Y += Speed;
-                    ChangeY(Speed);
-                }
-                else
-                    canMove = false;
-            }
-        }
+        }               
 
         public void MoveRight(List<BlockModel> droppedBlocks)
         {
@@ -224,14 +210,6 @@ namespace TetrisLibrary
             }
         }
 
-        private void DropDownRotationForm()
-        {
-            if (RotatinForm == 1)
-                RotatinForm = 4;
-            else
-                RotatinForm -= 1;
-        }
-
         public void MoveDownRectangle(int y)
         {
             List<Rectangle> recToMove = new List<Rectangle>();
@@ -248,6 +226,25 @@ namespace TetrisLibrary
                 HitBox.Add(rec);
             }
         }
+
+        public void MoveAbsoluteDown(List<BlockModel> droppedBlocks)
+        {
+            while (true)
+            {
+                if (CanMakeMove(droppedBlocks, 0, Speed) && Y + Height != 950)
+                {
+                    MoveDown(droppedBlocks);
+                }
+                else
+                {
+                    Stoped.Invoke(this, EventArgs.Empty);
+                    break;
+                }
+            }
+        }
+
+
+        
         
     }
 }

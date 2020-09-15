@@ -42,6 +42,15 @@ namespace TetrisLibrary
             }
         }
 
+        public void CheckForAbsoluteDown(KeyboardState state, BlockModel block, bool dropDown, List<BlockModel> droppedBlocks)
+        {
+            if(state.IsKeyDown(Keys.Space) && dropDown && block != null)
+            {
+                block.MoveAbsoluteDown(droppedBlocks);
+            }
+
+        }
+
         
 
     }

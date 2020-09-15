@@ -19,7 +19,7 @@ namespace TetrisLibrary
             EmptyRowCounts();
         }
         
-        private void EmptyRowCounts()
+        public void EmptyRowCounts()
         {
             for (int i = 0; i < RowCounts.Length; i++)
             {
@@ -50,7 +50,6 @@ namespace TetrisLibrary
             }
             if(checkForCompleteRow)
             CheckForCompleteRow();
-            CheckForEnd();
         }
 
         public void ResetRows(List<BlockModel> blocks)
@@ -62,10 +61,11 @@ namespace TetrisLibrary
             }
         }
 
-        private void CheckForEnd()
+        public void CheckForEnd()
         {
             if (RowCounts[0] > 0)
                 GameEnded.Invoke(this, EventArgs.Empty);
         }
+
     }
 }
