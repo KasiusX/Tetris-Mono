@@ -22,9 +22,9 @@ namespace TetrisLibrary
                 int moveX = value - _X;
                 ChangeX(moveX);
                 if (_X < value)
-                    Moved.Invoke(this, "right");
+                    Moved?.Invoke(this, "right");
                 else if (_X > value)
-                    Moved.Invoke(this, "left");
+                    Moved?.Invoke(this, "left");
                 _X = value;
             }
         }
@@ -37,7 +37,7 @@ namespace TetrisLibrary
             private set {
                 int moveY = value - _Y;
                 ChangeY(moveY);
-                Moved.Invoke(this, "down");
+                Moved?.Invoke(this, "down");
                 _Y = value;
             }
         }
@@ -101,34 +101,27 @@ namespace TetrisLibrary
             Y = y;
         }
 
+        //changes y for each rectangle in Hitbox based on y change
         private void ChangeY(int moveY)
         {
-            List<Rectangle> newHitBox = new List<Rectangle>();
-            foreach (Rectangle r in HitBox)
+            for (int i = 0; i < HitBox.Count; i++)
             {
-                Rectangle rec = r;
-                rec.Y += moveY;
-                newHitBox.Add(rec);
+                Rectangle recToEdit = HitBox[i];
+                recToEdit.Y += moveY;
+                HitBox[i] = recToEdit;
             }
-            HitBox = newHitBox;
         }
 
-        private void ChangeX(int move)
+        //changes x for each rectangle in Hitbox based on x change
+        private void ChangeX(int moveX)
         {
-            List<Rectangle> newHitBox = new List<Rectangle>();
-            foreach (Rectangle r in HitBox)
+            for(int i = 0; i < HitBox.Count; i++)
             {
-                Rectangle rec = r;
-                rec.X += move;
-                newHitBox.Add(rec);
+                Rectangle recToEdit = HitBox[i];
+                recToEdit.X += moveX;
+                HitBox[i] = recToEdit;
             }
-            HitBox = newHitBox;
-        }
-
-        public bool CheckIfIsDown(int windowHeight)
-        {
-           return Y + Height == windowHeight - 25;
-        }
+        }        
 
         private bool CanMakeMove( List<BlockModel> droppedBlocks, int changeX, int changeY)
         {

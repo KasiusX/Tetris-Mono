@@ -3,9 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Xml.Schema;
 using TetrisLibrary;
 
 namespace TetrisMono
@@ -211,7 +208,7 @@ namespace TetrisMono
 
         private void CheckIfBlockIsDown()
         {
-            if (activeBlock.CheckIfIsDown(graphics.PreferredBackBufferHeight))
+            if (activeBlock.Y + activeBlock.Height == graphics.PreferredBackBufferHeight -25)
             {
                 NewBlock();
             }
