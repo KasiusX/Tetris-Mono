@@ -39,7 +39,7 @@ namespace TetrisLibrary
                 
         public void AddBlock(BlockModel block, bool checkForCompleteRow = true)
         {
-            foreach (Rectangle rec in block.HitBox)
+            foreach (Rectangle rec in block.Hitbox)
             {
                 int i = (rec.Y-150) / 40;
                 RowCounts[i]++;

@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Net.Configuration;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,18 +47,15 @@ namespace TetrisLibrary
         public int Width { get; set; }
         public int Height{ get; set; }
         public int Speed { get; set; } = 40;
-        public List<Rectangle> HitBox { get; set; }
+        public List<Rectangle> Hitbox { get; set; }
         public BlockType Type { get; set; }
         public Color Color { get; set; }
-        public int RotatinForm { get; set; } = 1;
+        public int RotationForm { get; set; } = 1;
 
         public event EventHandler<string> Moved;
         public event EventHandler Stoped;
         public event EventHandler Rotated;
-        public BlockModel()
-        {
 
-        }
         public BlockModel(BlockType type, Color color, int width, int height)
         {
             Type = type;
@@ -64,36 +63,51 @@ namespace TetrisLibrary
             Width = width;
             Height = height;
             HitboxManager manager = new HitboxManager();
-            HitBox = manager.GetHitBoxes(this);
+            Hitbox = manager.GetHitBoxes(this);
         }
 
-        public void MoveDown(List<BlockModel> droppedBlocks)
-        {
-            if (CanMakeMove(droppedBlocks,0, Speed))
+        public bool MoveDown(List<BlockModel> droppedBlocks)
+        {            
+            int previousY = Y;
+            Y += Speed;
+            if (ColideWithSomething(droppedBlocks))
             {
-                Y += Speed;
+                Y = previousY;
+                Stoped.Invoke(this, EventArgs.Empty);
+                return false;
             }
             else
-            {
-                Stoped.Invoke(this, EventArgs.Empty);
-            }
-        }               
+                return true;
+        }                   
 
         public void MoveRight(List<BlockModel> droppedBlocks)
         {
-            if (CanMakeMove(droppedBlocks, Speed, 0))
+            int previousX = X;
+            X += Speed;
+            if (ColideWithSomething(droppedBlocks))
             {
-                X += Speed;
+                X = previousX;
             }
         }
 
         public void MoveLeft(List<BlockModel> droppedBlocks)
         {
-            if (CanMakeMove(droppedBlocks, -Speed, 0))
+            int previousX = X;
+            X -= Speed;
+            if(ColideWithSomething(droppedBlocks))
             {
-                X -= Speed;
+                X = previousX;
             }
-        }        
+        }
+        private bool ColideWithSomething(List<BlockModel> droppedBlocks)
+        {
+            foreach (BlockModel block in droppedBlocks)
+            {
+                if (block.ColideWith(Hitbox))
+                    return true;
+            }
+            return false;
+        }
 
         public void ChangePositionOn(int x, int y)
         {
@@ -104,55 +118,28 @@ namespace TetrisLibrary
         //changes y for each rectangle in Hitbox based on y change
         private void ChangeY(int moveY)
         {
-            for (int i = 0; i < HitBox.Count; i++)
+            for (int i = 0; i < Hitbox.Count; i++)
             {
-                Rectangle recToEdit = HitBox[i];
+                Rectangle recToEdit = Hitbox[i];
                 recToEdit.Y += moveY;
-                HitBox[i] = recToEdit;
+                Hitbox[i] = recToEdit;
             }
         }
 
         //changes x for each rectangle in Hitbox based on x change
         private void ChangeX(int moveX)
         {
-            for(int i = 0; i < HitBox.Count; i++)
+            for(int i = 0; i < Hitbox.Count; i++)
             {
-                Rectangle recToEdit = HitBox[i];
+                Rectangle recToEdit = Hitbox[i];
                 recToEdit.X += moveX;
-                HitBox[i] = recToEdit;
+                Hitbox[i] = recToEdit;
             }
         }        
 
-        private bool CanMakeMove( List<BlockModel> droppedBlocks, int changeX, int changeY)
-        {
-            List<Rectangle> testHitBox = MakeTestHitBox(changeX, changeY);
-            
-            foreach (BlockModel block in droppedBlocks)
-            {
-                if (block.ColideWith(testHitBox))
-                    return false;
-            }
-            return true;
-        }
-
-        private List<Rectangle> MakeTestHitBox(int changeX, int changeY)
-        {
-            List<Rectangle> output = new List<Rectangle>();
-            foreach (Rectangle r in HitBox)
-            {
-                Rectangle rec = r;
-                rec.X += changeX;
-                rec.Y += changeY;
-                output.Add(rec);
-            }
-            return output;        
-        }
-
-        
-
         public bool ColideWith(List<Rectangle> hitbox)
         {
-            foreach (Rectangle thisRec in HitBox)
+            foreach (Rectangle thisRec in Hitbox)
             {
                 foreach (Rectangle newRec in hitbox)
                 {
@@ -165,33 +152,28 @@ namespace TetrisLibrary
 
         public void Rotate(HitboxManager manager, List<BlockModel> droppedBlocks)
         {
-            if (CanRotate(manager,droppedBlocks))
-            {
-                int x = X;
-                int y = Y;               
-                ChangePositionOn(0, 0);
-                manager.RotateHitBox(this);
-                Rotated.Invoke(this, EventArgs.Empty);
-                ChangePositionOn(x, y);
-                SwitchWideHeight();
-                CheckIfIsOutside(droppedBlocks);
-            }
+            BlockModel backup = this;
+            int x = X;
+            int y = Y;
+            ChangePositionOn(0, 0);
+            manager.RotateHitBox(this);
+            Rotated.Invoke(this, EventArgs.Empty);
+
+            ChangePositionOn(x, y);
+            SwitchWideHeight();
+            CheckIfIsOutside(droppedBlocks);
+
+            if (ColideWithSomething(droppedBlocks))
+                LoadBackup(backup);
         }
 
-        private bool CanRotate(HitboxManager manager,List<BlockModel> droppedBlocks)
+        private void LoadBackup(BlockModel backup)
         {
-            BlockModel testBlock = new BlockModel { Type = Type, RotatinForm = RotatinForm == 4? 1: RotatinForm+1 };
-            testBlock.HitBox = manager.GetHitBoxes(testBlock);
-            testBlock.ChangePositionOn(X, Y);
-            foreach (BlockModel block in droppedBlocks)
-            {
-                if (block.ColideWith(testBlock.HitBox))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+            X = backup.X;
+            Y = backup.Y;
+            Hitbox = backup.Hitbox;
+            RotationForm = backup.RotationForm;
+        }        
 
         private void SwitchWideHeight()
         {
@@ -202,48 +184,36 @@ namespace TetrisLibrary
 
         private void CheckIfIsOutside(List<BlockModel> droppedBlocks)
         {
-            foreach (var rec in HitBox)
+            for(int i = 0; i < Hitbox.Count; i++)
             {
-                if (rec.X >= 400)
-                    MoveLeft(droppedBlocks);
+                if (Hitbox[i].X >= 400)
+                {
+                    MoveLeft(droppedBlocks);                  
+                }
             }
         }
-
-        public void MoveDownRectangle(int y)
+        //foreach rectengle in Hitbox checked if it is above the row that was deleted if yes it move it down
+        public void DropDownRectangles(int rowY)
         {
-            List<Rectangle> recToMove = new List<Rectangle>();
-            foreach (Rectangle rectangle in HitBox)
+            for (int i = 0; i < Hitbox.Count; i++)
             {
-                if (rectangle.Y < y)
-                    recToMove.Add(rectangle);
+                Rectangle recToDrop = Hitbox[i];            
+                if (recToDrop.Y < rowY)
+                {
+                    recToDrop.Y += Speed;
+                }
+                Hitbox[i] = recToDrop;
             }
-            foreach (Rectangle rectangle1 in recToMove)
-            {
-                HitBox.Remove(rectangle1);
-                Rectangle rec = rectangle1;
-                rec.Y += 40;
-                HitBox.Add(rec);
-            }
+
         }
 
         public void MoveAbsoluteDown(List<BlockModel> droppedBlocks)
         {
             while (true)
-            {
-                if (CanMakeMove(droppedBlocks, 0, Speed) && Y + Height != 950)
-                {
-                    MoveDown(droppedBlocks);
-                }
-                else
-                {
-                    Stoped.Invoke(this, EventArgs.Empty);
+            {                
+                if (!MoveDown(droppedBlocks) || Y + Height == 950)
                     break;
-                }
             }
         }
-
-
-        
-        
     }
 }

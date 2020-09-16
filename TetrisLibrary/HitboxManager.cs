@@ -53,7 +53,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesLeftLShape(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1:
                     rec.X = 40;
@@ -130,7 +130,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesRightLShape(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1:
                     rec.X = 0;
@@ -206,7 +206,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesLeftZShape(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1: 
                 case 3:
@@ -251,7 +251,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesRightZShape(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1: 
                 case 3:
@@ -296,7 +296,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesLongBlock(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1:
                 case 3:
@@ -341,7 +341,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesSquareBlock(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1:
                 case 2:
@@ -369,7 +369,7 @@ namespace TetrisLibrary
         private List<Rectangle> GetHitboxesTShapeBlock(BlockModel block, Rectangle rec)
         {
             List<Rectangle> output = new List<Rectangle>();
-            switch (block.RotatinForm)
+            switch (block.RotationForm)
             {
                 case 1:
                     rec.X = 40;
@@ -445,15 +445,15 @@ namespace TetrisLibrary
         public void RotateHitBox(BlockModel block)
         {
             AddRotationForm(block);
-            block.HitBox = GetHitBoxes(block);
+            block.Hitbox = GetHitBoxes(block);
         }
 
         private void AddRotationForm(BlockModel block)
         {
-            if (block.RotatinForm == 4)
-                block.RotatinForm = 1;
+            if (block.RotationForm == 4)
+                block.RotationForm = 1;
             else
-                block.RotatinForm += 1;
+                block.RotationForm += 1;
         }
 
         

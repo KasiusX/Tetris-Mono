@@ -177,7 +177,7 @@ namespace TetrisMono
 
         private void DrawBlock(BlockModel block)
         {
-            foreach (var r in block.HitBox)
+            foreach (var r in block.Hitbox)
             {
                 spriteBatch.Draw(blockSprite, r, block.Color);
             }
@@ -237,7 +237,7 @@ namespace TetrisMono
 
         }
 
-        private void ActiveBlock_Rotated(object sender, System.EventArgs e)
+        private void ActiveBlock_Rotated(object sender, EventArgs e)
         {
             rotate = false;
         }
@@ -278,14 +278,14 @@ namespace TetrisMono
             List<Rectangle> recToDelete = new List<Rectangle>();
             foreach (BlockModel block in droppedBlocks)
             {
-                foreach (Rectangle rec in block.HitBox)
+                foreach (Rectangle rec in block.Hitbox)
                 {
                     if (rec.Y == y)
                         recToDelete.Add(rec);
                 }
                 foreach (Rectangle rec in recToDelete)
                 {
-                    block.HitBox.Remove(rec);
+                    block.Hitbox.Remove(rec);
                     recToDelete = new List<Rectangle>();
                 }
             }
@@ -294,28 +294,20 @@ namespace TetrisMono
         }
 
         private void MoveBlocksDown(int y)
-        {
-            //List<Rectangle> recToMoveDown;
-            //for (int i = 0; i < droppedBlocks.Count; i++)
-            //{
-            //    for (int ir = 0; ir < droppedBlocks[i].HitBox.Count; ir++)
-            //    {
-            //        recToMoveDown = droppedBlocks[i].HitBox.Where(x => x.Y <= y).ToList();
-            //    }   
-            //}
-
+        {            
             for (int i = 0; i < droppedBlocks.Count; i++)
             {
-                droppedBlocks[i].MoveDownRectangle(y);
+                droppedBlocks[i].DropDownRectangles(y);
             }
             rowsManager.ResetRows(droppedBlocks);
         }
+
         private void ClearDroppedBlocks()
         {
             List<BlockModel> blocksToRemove = new List<BlockModel>();
             foreach (BlockModel block in droppedBlocks)
             {
-                if (block.HitBox.Count == 0)
+                if (block.Hitbox.Count == 0)
                     blocksToRemove.Add(block);
             }
             foreach (BlockModel block in blocksToRemove)
