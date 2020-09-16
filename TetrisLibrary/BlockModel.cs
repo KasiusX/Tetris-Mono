@@ -13,8 +13,35 @@ namespace TetrisLibrary
     public class BlockModel
     {
 
-        public int X { get; private set; }
-        public int Y { get; private set; }
+        private int _X;
+
+        public int X
+        {
+            get { return _X; }
+            private set {
+                int moveX = value - _X;
+                ChangeX(moveX);
+                if (_X < value)
+                    Moved.Invoke(this, "right");
+                else if (_X > value)
+                    Moved.Invoke(this, "left");
+                _X = value;
+            }
+        }
+
+        private int _Y;
+
+        public int Y
+        {
+            get { return _Y; }
+            private set {
+                int moveY = value - _Y;
+                ChangeY(moveY);
+                Moved.Invoke(this, "down");
+                _Y = value;
+            }
+        }
+
         public int Width { get; set; }
         public int Height{ get; set; }
         public int Speed { get; set; } = 40;
@@ -30,7 +57,7 @@ namespace TetrisLibrary
         {
 
         }
-        public BlockModel(int startingY,BlockType type, Color color, int width, int height)
+        public BlockModel(BlockType type, Color color, int width, int height)
         {
             Type = type;
             Color = color;
@@ -45,8 +72,6 @@ namespace TetrisLibrary
             if (CanMakeMove(droppedBlocks,0, Speed))
             {
                 Y += Speed;
-                ChangeY(Speed);
-                Moved.Invoke(this, "down");
             }
             else
             {
@@ -59,8 +84,6 @@ namespace TetrisLibrary
             if (CanMakeMove(droppedBlocks, Speed, 0))
             {
                 X += Speed;
-                ChangeX(Speed);
-                Moved.Invoke(this, "right");
             }
         }
 
@@ -69,28 +92,22 @@ namespace TetrisLibrary
             if (CanMakeMove(droppedBlocks, -Speed, 0))
             {
                 X -= Speed;
-                ChangeX(-Speed);
-                Moved.Invoke(this, "left");
             }
         }        
 
         public void ChangePositionOn(int x, int y)
         {
-            int moveX = x - X;
-            ChangeX(moveX);
-            int moveY = y - Y;
-            ChangeY(moveY);
             X = x;
             Y = y;
         }
 
-        private void ChangeY(int move)
+        private void ChangeY(int moveY)
         {
             List<Rectangle> newHitBox = new List<Rectangle>();
             foreach (Rectangle r in HitBox)
             {
                 Rectangle rec = r;
-                rec.Y += move;
+                rec.Y += moveY;
                 newHitBox.Add(rec);
             }
             HitBox = newHitBox;
@@ -151,28 +168,17 @@ namespace TetrisLibrary
                 }
             }
             return false;
-        }
-
-        public void ResetPosition()
-        {
-            X = 0;
-            Y = 0;
-        }
-
-        public void RotatedInvoke()
-        {
-            Rotated.Invoke(this, EventArgs.Empty);
-        }
+        }               
 
         public void Rotate(HitboxManager manager, List<BlockModel> droppedBlocks)
         {
             if (CanRotate(manager,droppedBlocks))
             {
+                int x = X;
+                int y = Y;               
+                ChangePositionOn(0, 0);
                 manager.RotateHitBox(this);
                 Rotated.Invoke(this, EventArgs.Empty);
-                int x = X;
-                int y = Y;
-                ResetPosition();
                 ChangePositionOn(x, y);
                 SwitchWideHeight();
                 CheckIfIsOutside(droppedBlocks);
