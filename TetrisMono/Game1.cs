@@ -29,6 +29,7 @@ namespace TetrisMono
         BlockManager blockManager;
         BlockMovement blockMovement;
         RowsManager rowsManager;
+        HitboxManager hitboxManager;
 
         int secondOfMoveDown;
         bool moveRight = true;
@@ -65,9 +66,10 @@ namespace TetrisMono
             blockSprite = Content.Load<Texture2D>("square-sprite");
             gameFont = Content.Load<SpriteFont>("game-font");
             endGameFont = Content.Load<SpriteFont>("EndGameFont");
-            blockManager = new BlockManager(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight, startingY);
+            blockManager = new BlockManager();
             blockMovement = new BlockMovement();
             rowsManager = new RowsManager();
+            hitboxManager = new HitboxManager();
             rowsManager.RowFilled += RowsManager_RowFilled;
             rowsManager.GameEnded += RowsManager_GameEnded;
         }
@@ -142,7 +144,7 @@ namespace TetrisMono
         private void CheckForPlayerMovement()
         {
             blockMovement.CheckForMove(Keyboard.GetState(), activeBlock, droppedBlocks, moveLeft, moveRight, moveDown);
-            blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, blockManager.manager, droppedBlocks);
+            blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, hitboxManager, droppedBlocks);
             blockMovement.CheckForAbsoluteDown(Keyboard.GetState(), activeBlock, dropDown, droppedBlocks);
         }
 

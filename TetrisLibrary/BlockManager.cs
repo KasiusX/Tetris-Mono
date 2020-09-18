@@ -11,18 +11,8 @@ namespace TetrisLibrary
 {
     public class BlockManager
     {
-        private readonly int windowWidht;
-        private readonly int windowHeight;
-        private readonly int startingY;
         Random random = new Random();
-        public HitboxManager manager = new HitboxManager();
-
-        public BlockManager(int windowWidht,int windowHeight, int startingY)
-        {
-            this.windowWidht = windowWidht;
-            this.windowHeight = windowHeight;
-            this.startingY = startingY;
-        }
+                
         public BlockModel GenerateRandomBlock()
         {
            char choice = char.Parse(random.Next(7).ToString());
