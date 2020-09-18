@@ -46,7 +46,7 @@ namespace TetrisLibrary
 
         public int Width { get; set; }
         public int Height{ get; set; }
-        public int Speed { get; set; } = 40;
+        public int BlockWidth { get; set; } = 40;
         public List<Rectangle> Hitbox { get; set; }
         public BlockType Type { get; set; }
         public Color Color { get; set; }
@@ -69,7 +69,7 @@ namespace TetrisLibrary
         public bool MoveDown(List<BlockModel> droppedBlocks)
         {            
             int previousY = Y;
-            Y += Speed;
+            Y += BlockWidth;
             if (ColideWithSomething(droppedBlocks))
             {
                 Y = previousY;
@@ -83,7 +83,7 @@ namespace TetrisLibrary
         public void MoveRight(List<BlockModel> droppedBlocks)
         {
             int previousX = X;
-            X += Speed;
+            X += BlockWidth;
             if (ColideWithSomething(droppedBlocks))
             {
                 X = previousX;
@@ -93,7 +93,7 @@ namespace TetrisLibrary
         public void MoveLeft(List<BlockModel> droppedBlocks)
         {
             int previousX = X;
-            X -= Speed;
+            X -= BlockWidth;
             if(ColideWithSomething(droppedBlocks))
             {
                 X = previousX;
@@ -120,9 +120,9 @@ namespace TetrisLibrary
         {
             for (int i = 0; i < Hitbox.Count; i++)
             {
-                Rectangle recToEdit = Hitbox[i];
-                recToEdit.Y += moveY;
-                Hitbox[i] = recToEdit;
+                Rectangle rectangleToMove = Hitbox[i];
+                rectangleToMove.Y += moveY;
+                Hitbox[i] = rectangleToMove;
             }
         }
 
@@ -131,19 +131,19 @@ namespace TetrisLibrary
         {
             for(int i = 0; i < Hitbox.Count; i++)
             {
-                Rectangle recToEdit = Hitbox[i];
-                recToEdit.X += moveX;
-                Hitbox[i] = recToEdit;
+                Rectangle rectangleToMove = Hitbox[i];
+                rectangleToMove.X += moveX;
+                Hitbox[i] = rectangleToMove;
             }
         }        
 
         public bool ColideWith(List<Rectangle> hitbox)
         {
-            foreach (Rectangle thisRec in Hitbox)
+            foreach (Rectangle thisRectangleHitbox in Hitbox)
             {
-                foreach (Rectangle newRec in hitbox)
+                foreach (Rectangle newRectangleHitbox in hitbox)
                 {
-                    if (thisRec.Intersects(newRec))
+                    if (thisRectangleHitbox.Intersects(newRectangleHitbox))
                         return true;
                 }
             }
@@ -197,13 +197,13 @@ namespace TetrisLibrary
         {
             for (int i = 0; i < Hitbox.Count; i++)
             {
-                Rectangle recToDrop = Hitbox[i];            
-                if (recToDrop.Y < rowY)
+                Rectangle rectangleHitboxToDrop = Hitbox[i];
+                if (rectangleHitboxToDrop.Y < rowY)
                 {
-                    recToDrop.Y += Speed;
+                    rectangleHitboxToDrop.Y += BlockWidth;
                 }
-                Hitbox[i] = recToDrop;
-            }
+                Hitbox[i] = rectangleHitboxToDrop;
+            }  
 
         }
 
