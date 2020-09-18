@@ -41,7 +41,7 @@ namespace TetrisLibrary
 
         public int Width { get; set; }
         public int Height{ get; set; }
-        public int BlockWidth { get; set; } = 40;
+        public int SquareWidth { get; set; } = 40;
         public List<Rectangle> Hitbox { get; set; }
         public BlockType Type { get; set; }
         public Color Color { get; set; }
@@ -171,7 +171,7 @@ namespace TetrisLibrary
                 Rectangle rectangleHitboxToDrop = Hitbox[i];
                 if (rectangleHitboxToDrop.Y < rowY)
                 {
-                    rectangleHitboxToDrop.Y += BlockWidth;
+                    rectangleHitboxToDrop.Y += SquareWidth;
                 }
                 Hitbox[i] = rectangleHitboxToDrop;
             }  

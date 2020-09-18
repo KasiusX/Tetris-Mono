@@ -55,7 +55,7 @@ namespace TetrisLibrary
         public bool MoveDown(List<BlockModel> droppedBlocks, BlockModel block)
         {
             int previousY = block.Y;
-            block.Y += block.BlockWidth;
+            block.Y += block.SquareWidth;
             if (block.DoesColideWithDroppedBlocks(droppedBlocks))
             {
                 block.Y = previousY;
@@ -72,7 +72,7 @@ namespace TetrisLibrary
         public void MoveRight(List<BlockModel> droppedBlocks,BlockModel block)
         {
             int previousX = block.X;
-            block.X += block.BlockWidth; 
+            block.X += block.SquareWidth; 
             if (block.DoesColideWithDroppedBlocks(droppedBlocks))
             {
                 block.X = previousX;
@@ -86,7 +86,7 @@ namespace TetrisLibrary
         public void MoveLeft(List<BlockModel> droppedBlocks, BlockModel block)
         {
             int previousX = block.X;
-            block.X -= block.BlockWidth;
+            block.X -= block.SquareWidth;
             if (block.DoesColideWithDroppedBlocks(droppedBlocks))
             {
                 block.X = previousX;
