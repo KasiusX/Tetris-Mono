@@ -26,7 +26,7 @@ namespace TetrisMono
 
         BlockModel activeBlock;
         BlockModel nextBlock;
-        BlockManager blockManager;
+        BlockGenerator blockManager;
         BlockMovement blockMovement;
         RowsManager rowsManager;
         HitboxManager hitboxManager;
@@ -66,26 +66,17 @@ namespace TetrisMono
             blockSprite = Content.Load<Texture2D>("square-sprite");
             gameFont = Content.Load<SpriteFont>("game-font");
             endGameFont = Content.Load<SpriteFont>("EndGameFont");
-            blockManager = new BlockManager();
+            blockManager = new BlockGenerator();
             blockMovement = new BlockMovement();
+            blockMovement.BlockStoped += BlockMovement_BlockStoped;
+            blockMovement.BlockMoved += BlockMovement_BlockMoved;
             rowsManager = new RowsManager();
             hitboxManager = new HitboxManager();
             rowsManager.RowFilled += RowsManager_RowFilled;
             rowsManager.GameEnded += RowsManager_GameEnded;
         }
 
-        private void RowsManager_GameEnded(object sender, EventArgs e)
-        {
-            end = true;
-        }
-
-        private void RowsManager_RowFilled(object sender, int e)
-        {
-            Score += 1;
-            RemoveRow(e);
-        }
-
-        private void BlockMovement_Moved(object sender, string e)
+        private void BlockMovement_BlockMoved(object sender, string e)
         {
             if (e == "left")
                 moveLeft = false;
@@ -98,6 +89,23 @@ namespace TetrisMono
             }
         }
 
+        private void BlockMovement_BlockStoped(object sender, BlockModel e)
+        {
+            NewBlock();
+            rowsManager.CheckForEnd();
+        }
+
+        private void RowsManager_GameEnded(object sender, EventArgs e)
+        {
+            end = true;
+        }
+
+        private void RowsManager_RowFilled(object sender, int e)
+        {
+            Score += 1;
+            RemoveRow(e);
+        }
+        
         protected override void UnloadContent()
         {
 
@@ -115,7 +123,7 @@ namespace TetrisMono
                 }
                 if (secondOfMoveDown != gameTime.TotalGameTime.Seconds)
                 {
-                    activeBlock.MoveDown(droppedBlocks);
+                    blockMovement.MoveDown(droppedBlocks,activeBlock);
                     secondOfMoveDown = gameTime.TotalGameTime.Seconds;
                 }
 
@@ -133,13 +141,7 @@ namespace TetrisMono
             CheckForResetBools();
 
             base.Update(gameTime);
-        }
-
-        private void ActiveBlock_Stoped(object sender, System.EventArgs e)
-        {
-            NewBlock();
-            rowsManager.CheckForEnd();
-        }
+        }                
 
         private void CheckForPlayerMovement()
         {
@@ -228,8 +230,6 @@ namespace TetrisMono
                 nextBlock = blockManager.GenerateRandomBlock();
             }
             activeBlock = nextBlock;
-            activeBlock.Moved += BlockMovement_Moved;
-            activeBlock.Stoped += ActiveBlock_Stoped;
             activeBlock.Rotated += ActiveBlock_Rotated;
             activeBlock.ChangePositionOn(25 + 4 * 40, startingY);
             nextBlock = blockManager.GenerateRandomBlock();

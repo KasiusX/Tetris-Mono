@@ -15,43 +15,95 @@ namespace TetrisLibrary
 {
     public class BlockMovement
     {
-        
-        public void CheckForMove(KeyboardState state, BlockModel block,List<BlockModel> droppedBlocks, bool moveLeft, bool moveRight, bool moveDown)
+        public event EventHandler<BlockModel> BlockStoped;
+        public event EventHandler<string> BlockMoved;
+
+        public void CheckForMove(KeyboardState state, BlockModel blockToMove,List<BlockModel> droppedBlocks, bool moveLeft, bool moveRight, bool moveDown)
         {
-            if (state.IsKeyDown(Keys.A) && block.X > 25 && moveLeft)
-            {                
-                    block.MoveLeft(droppedBlocks);              
+            if (state.IsKeyDown(Keys.A) && blockToMove.X > 25 && moveLeft)
+            {                   
+                    MoveLeft(droppedBlocks, blockToMove);              
             }
-            if ((state.IsKeyDown(Keys.D) && block.X + block.Width < 425) && moveRight)
+            if ((state.IsKeyDown(Keys.D) && blockToMove.X + blockToMove.Width < 425) && moveRight)
             {
-                block.MoveRight(droppedBlocks);
+                MoveRight(droppedBlocks, blockToMove);
                 
             }
             if (state.IsKeyDown(Keys.S) && moveDown)
             {
-                block.MoveDown(droppedBlocks);
-                
+                MoveDown(droppedBlocks, blockToMove);                
             }
         }
 
-         public void CheckForRotation(KeyboardState state, BlockModel block, bool rotate, HitboxManager manager, List<BlockModel> droppedBlocks)
+         public void CheckForRotation(KeyboardState state, BlockModel blockToMove, bool rotate, HitboxManager manager, List<BlockModel> droppedBlocks)
         {
-            if(state.IsKeyDown(Keys.W) && rotate && block != null)
+            if(state.IsKeyDown(Keys.W) && rotate && blockToMove != null)
             {
-                block.Rotate(manager, droppedBlocks);                
+                blockToMove.Rotate(manager, droppedBlocks);                
             }
         }
 
-        public void CheckForAbsoluteDown(KeyboardState state, BlockModel block, bool dropDown, List<BlockModel> droppedBlocks)
+        public void CheckForAbsoluteDown(KeyboardState state, BlockModel blockToMove, bool dropDown, List<BlockModel> droppedBlocks)
         {
-            if(state.IsKeyDown(Keys.Space) && dropDown && block != null)
+            if(state.IsKeyDown(Keys.Space) && dropDown && blockToMove != null)
             {
-                block.MoveAbsoluteDown(droppedBlocks);
+                MoveAbsoluteDown(droppedBlocks, blockToMove);
             }
 
         }
 
-        
+        public bool MoveDown(List<BlockModel> droppedBlocks, BlockModel block)
+        {
+            int previousY = block.Y;
+            block.Y += block.BlockWidth;
+            if (block.DoesColideWithDroppedBlocks(droppedBlocks))
+            {
+                block.Y = previousY;
+                BlockStoped.Invoke(this, block);
+                return false;
+            }
+            else
+            {
+                BlockMoved.Invoke(this, "down");
+                return true;
+            }
+        }
 
+        public void MoveRight(List<BlockModel> droppedBlocks,BlockModel block)
+        {
+            int previousX = block.X;
+            block.X += block.BlockWidth; 
+            if (block.DoesColideWithDroppedBlocks(droppedBlocks))
+            {
+                block.X = previousX;
+            }
+            else
+            {
+                BlockMoved.Invoke(this, "right");
+            }
+        }
+
+        public void MoveLeft(List<BlockModel> droppedBlocks, BlockModel block)
+        {
+            int previousX = block.X;
+            block.X -= block.BlockWidth;
+            if (block.DoesColideWithDroppedBlocks(droppedBlocks))
+            {
+                block.X = previousX;
+            }
+            else
+            {
+                BlockMoved.Invoke(this, "left");
+            }
+        }
+
+        public void MoveAbsoluteDown(List<BlockModel> droppedBlocks,BlockModel block)
+        {
+            while (true)
+            {
+                if (!MoveDown(droppedBlocks,block) || block.Y + block.Height == 950)
+                    break;
+            }
+        }        
     }
 }

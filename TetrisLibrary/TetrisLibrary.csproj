@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockManager.cs" />
+    <Compile Include="BlockGenerator.cs" />
     <Compile Include="BlockModel.cs" />
     <Compile Include="BlockMovement.cs" />
     <Compile Include="Enums.cs" />

@@ -20,13 +20,9 @@ namespace TetrisLibrary
         public int X
         {
             get { return _X; }
-            private set {
+            internal set {
                 int moveX = value - _X;
                 ChangeX(moveX);
-                if (_X < value)
-                    Moved?.Invoke(this, "right");
-                else if (_X > value)
-                    Moved?.Invoke(this, "left");
                 _X = value;
             }
         }
@@ -36,10 +32,9 @@ namespace TetrisLibrary
         public int Y
         {
             get { return _Y; }
-            private set {
+            internal set {
                 int moveY = value - _Y;
                 ChangeY(moveY);
-                Moved?.Invoke(this, "down");
                 _Y = value;
             }
         }
@@ -52,8 +47,6 @@ namespace TetrisLibrary
         public Color Color { get; set; }
         public int RotationForm { get; set; } = 1;
 
-        public event EventHandler<string> Moved;
-        public event EventHandler Stoped;
         public event EventHandler Rotated;
 
         public BlockModel(BlockType type, Color color, int width, int height)
@@ -64,46 +57,13 @@ namespace TetrisLibrary
             Height = height;
             HitboxManager manager = new HitboxManager();
             Hitbox = manager.GetHitBoxes(this);
-        }
-
-        public bool MoveDown(List<BlockModel> droppedBlocks)
-        {            
-            int previousY = Y;
-            Y += BlockWidth;
-            if (ColideWithSomething(droppedBlocks))
-            {
-                Y = previousY;
-                Stoped.Invoke(this, EventArgs.Empty);
-                return false;
-            }
-            else
-                return true;
-        }                   
-
-        public void MoveRight(List<BlockModel> droppedBlocks)
-        {
-            int previousX = X;
-            X += BlockWidth;
-            if (ColideWithSomething(droppedBlocks))
-            {
-                X = previousX;
-            }
-        }
-
-        public void MoveLeft(List<BlockModel> droppedBlocks)
-        {
-            int previousX = X;
-            X -= BlockWidth;
-            if(ColideWithSomething(droppedBlocks))
-            {
-                X = previousX;
-            }
-        }
+        } 
+        
         private bool ColideWithSomething(List<BlockModel> droppedBlocks)
         {
             foreach (BlockModel block in droppedBlocks)
             {
-                if (block.ColideWith(Hitbox))
+                if (block.DoesColideWithBlockHitbox(Hitbox))
                     return true;
             }
             return false;
@@ -137,7 +97,7 @@ namespace TetrisLibrary
             }
         }        
 
-        public bool ColideWith(List<Rectangle> hitbox)
+        public bool DoesColideWithBlockHitbox(List<Rectangle> hitbox)
         {
             foreach (Rectangle thisRectangleHitbox in Hitbox)
             {
@@ -148,7 +108,17 @@ namespace TetrisLibrary
                 }
             }
             return false;
-        }               
+        }
+
+        public bool DoesColideWithDroppedBlocks(List<BlockModel> droppedBlocks)
+        {
+            foreach (BlockModel droppedBlock in droppedBlocks)
+            {
+                if (droppedBlock.DoesColideWithBlockHitbox(Hitbox))
+                    return true;
+            }
+            return false;
+        }
 
         public void Rotate(HitboxManager manager, List<BlockModel> droppedBlocks)
         {
@@ -161,7 +131,7 @@ namespace TetrisLibrary
 
             ChangePositionOn(x, y);
             SwitchWideHeight();
-            CheckIfIsOutside(droppedBlocks);
+            CheckIfIsOutside();
 
             if (ColideWithSomething(droppedBlocks))
                 LoadBackup(backup);
@@ -182,15 +152,16 @@ namespace TetrisLibrary
             Height = width;
         }
 
-        private void CheckIfIsOutside(List<BlockModel> droppedBlocks)
+        private bool CheckIfIsOutside()
         {
             for(int i = 0; i < Hitbox.Count; i++)
             {
                 if (Hitbox[i].X >= 400)
                 {
-                    MoveLeft(droppedBlocks);                  
+                    return true;                  
                 }
             }
+            return false;
         }
         //foreach rectengle in Hitbox checked if it is above the row that was deleted if yes it move it down
         public void DropDownRectangles(int rowY)
@@ -207,13 +178,6 @@ namespace TetrisLibrary
 
         }
 
-        public void MoveAbsoluteDown(List<BlockModel> droppedBlocks)
-        {
-            while (true)
-            {                
-                if (!MoveDown(droppedBlocks) || Y + Height == 950)
-                    break;
-            }
-        }
+        
     }
 }
