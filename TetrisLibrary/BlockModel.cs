@@ -69,6 +69,18 @@ namespace TetrisLibrary
             return false;
         }
 
+        private bool DoesColideWithBlockHitbox(List<Rectangle> hitbox)
+        {
+            foreach (Rectangle thisRectangleHitbox in Hitbox)
+            {
+                foreach (Rectangle newRectangleHitbox in hitbox)
+                {
+                    if (thisRectangleHitbox.Intersects(newRectangleHitbox))
+                        return true;
+                }
+            }
+            return false;
+        }
         public void ChangePositionOn(int x, int y)
         {
             X = x;
@@ -97,18 +109,6 @@ namespace TetrisLibrary
             }
         }        
 
-        public bool DoesColideWithBlockHitbox(List<Rectangle> hitbox)
-        {
-            foreach (Rectangle thisRectangleHitbox in Hitbox)
-            {
-                foreach (Rectangle newRectangleHitbox in hitbox)
-                {
-                    if (thisRectangleHitbox.Intersects(newRectangleHitbox))
-                        return true;
-                }
-            }
-            return false;
-        }
 
         public bool DoesColideWithDroppedBlocks(List<BlockModel> droppedBlocks)
         {
