@@ -455,10 +455,5 @@ namespace TetrisLibrary
             else
                 block.RotationForm += 1;
         }
-
-        
-
-        
-
     }
 }

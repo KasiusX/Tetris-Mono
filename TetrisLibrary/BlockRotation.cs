@@ -14,6 +14,7 @@ namespace TetrisLibrary
             BlockModel backup = blockToRotation;
             int x = blockToRotation.X;
             int y = blockToRotation.Y;
+
             blockToRotation.ChangePositionOn(0, 0);
             manager.GetRotatedHitbox(blockToRotation);
             blockToRotation.ChangePositionOn(x, y);
