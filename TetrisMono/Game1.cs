@@ -28,6 +28,7 @@ namespace TetrisMono
         BlockModel nextBlock;
         BlockGenerator blockManager;
         BlockMovement blockMovement;
+        KeyboardInputs keyboardInputs;
         RowsManager rowsManager;
         HitboxManager hitboxManager;
 
@@ -68,6 +69,7 @@ namespace TetrisMono
             endGameFont = Content.Load<SpriteFont>("EndGameFont");
             blockManager = new BlockGenerator();
             blockMovement = new BlockMovement();
+            keyboardInputs = new KeyboardInputs(blockMovement);
             blockMovement.BlockStoped += BlockMovement_BlockStoped;
             blockMovement.BlockMoved += BlockMovement_BlockMoved;
             rowsManager = new RowsManager();
@@ -123,7 +125,7 @@ namespace TetrisMono
                 }
                 if (secondOfMoveDown != gameTime.TotalGameTime.Seconds)
                 {
-                    blockMovement.MoveDown(droppedBlocks,activeBlock);
+                    blockMovement.MoveBlockDown(droppedBlocks,activeBlock);
                     secondOfMoveDown = gameTime.TotalGameTime.Seconds;
                 }
 
@@ -145,9 +147,9 @@ namespace TetrisMono
 
         private void CheckForPlayerMovement()
         {
-            blockMovement.CheckForMove(Keyboard.GetState(), activeBlock, droppedBlocks, moveLeft, moveRight, moveDown);
-            blockMovement.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, hitboxManager, droppedBlocks);
-            blockMovement.CheckForAbsoluteDown(Keyboard.GetState(), activeBlock, dropDown, droppedBlocks);
+            keyboardInputs.CheckForMove(Keyboard.GetState(), activeBlock, droppedBlocks, moveLeft, moveRight, moveDown);
+            keyboardInputs.CheckForRotation(Keyboard.GetState(), activeBlock, rotate, hitboxManager, droppedBlocks);
+            keyboardInputs.CheckForAbsoluteDown(Keyboard.GetState(), activeBlock, dropDown, droppedBlocks);
         }
 
         protected override void Draw(GameTime gameTime)
