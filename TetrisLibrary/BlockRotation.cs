@@ -15,14 +15,14 @@ namespace TetrisLibrary
             int x = blockToRotation.X;
             int y = blockToRotation.Y;
             blockToRotation.ChangePositionOn(0, 0);
-            manager.RotateHitBox(blockToRotation);
+            manager.GetRotatedHitbox(blockToRotation);
+            blockToRotation.ChangePositionOn(x, y);
+
+            SwitchWideHeight(blockToRotation);
             Rotated.Invoke(this, blockToRotation);
 
-            blockToRotation.ChangePositionOn(x, y);
-            SwitchWideHeight(blockToRotation);
-
             if (blockToRotation.DoesColideWithDroppedBlocks(droppedBlocks))
-                LoadBackup(backup,blockToRotation);
+               LoadBackup(backup, blockToRotation);                        
         }
 
         private void LoadBackup(BlockModel backup,BlockModel blockToRotation)

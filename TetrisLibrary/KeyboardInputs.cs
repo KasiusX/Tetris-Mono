@@ -10,34 +10,36 @@ namespace TetrisLibrary
 {
     public class KeyboardInputs
     {
-        BlockMovement movement;
+        BlockMovement blockMovement;
+        BlockRotation blockRotation;
 
-        public KeyboardInputs(BlockMovement movement)
+        public KeyboardInputs(BlockMovement movement, BlockRotation rotation)
         {
-            this.movement = movement;
+            blockMovement = movement;
+            blockRotation = rotation;
         }
         public void CheckForMove(KeyboardState state, BlockModel blockToMove, List<BlockModel> droppedBlocks, bool moveLeft, bool moveRight, bool moveDown)
         {
             if (state.IsKeyDown(Keys.A) && blockToMove.X > 25 && moveLeft)
             {
-                movement.MoveBlockLeft(droppedBlocks, blockToMove);
+                blockMovement.MoveBlockLeft(droppedBlocks, blockToMove);
             }
             if ((state.IsKeyDown(Keys.D) && blockToMove.X + blockToMove.Width < 425) && moveRight)
             {
-                movement.MoveBlockRight(droppedBlocks, blockToMove);
+                blockMovement.MoveBlockRight(droppedBlocks, blockToMove);
 
             }
             if (state.IsKeyDown(Keys.S) && moveDown)
             {
-                movement.MoveBlockDown(droppedBlocks, blockToMove);
+                blockMovement.MoveBlockDown(droppedBlocks, blockToMove);
             }
         }        
 
-        public void CheckForRotation(KeyboardState state, BlockModel blockToMove, bool rotate, HitboxManager manager, List<BlockModel> droppedBlocks)
+        public void CheckForRotation(KeyboardState state, BlockModel blockToRotate, bool rotate, HitboxManager manager, List<BlockModel> droppedBlocks)
         {
-            if (state.IsKeyDown(Keys.W) && rotate && blockToMove != null)
+            if (state.IsKeyDown(Keys.W) && rotate && blockToRotate != null)
             {
-                blockToMove.Rotate(manager, droppedBlocks);
+                blockRotation.RotateBlock(manager, droppedBlocks, blockToRotate);
             }
         }
 
@@ -45,7 +47,7 @@ namespace TetrisLibrary
         {
             if (state.IsKeyDown(Keys.Space) && dropDown && blockToMove != null)
             {
-                movement.MoveBlockAbsoluteDown(droppedBlocks, blockToMove);
+                blockMovement.MoveBlockAbsoluteDown(droppedBlocks, blockToMove);
             }
 
         }

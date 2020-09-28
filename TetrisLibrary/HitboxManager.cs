@@ -442,7 +442,7 @@ namespace TetrisLibrary
             }
             return output;
         }
-        public void RotateHitBox(BlockModel block)
+        public void GetRotatedHitbox(BlockModel block)
         {
             AddRotationForm(block);
             block.Hitbox = GetHitBoxes(block);

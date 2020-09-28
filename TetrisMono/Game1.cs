@@ -27,6 +27,7 @@ namespace TetrisMono
         BlockModel activeBlock;
         BlockModel nextBlock;
         BlockGenerator blockManager;
+        BlockRotation blockRotation;
         BlockMovement blockMovement;
         KeyboardInputs keyboardInputs;
         RowsManager rowsManager;
@@ -39,7 +40,6 @@ namespace TetrisMono
         bool rotate = true;
         bool end = false;
         bool dropDown = true;
-        bool restart = false;
         public int Score { get; set; }
 
         List<BlockModel> droppedBlocks = new List<BlockModel>();
@@ -69,13 +69,20 @@ namespace TetrisMono
             endGameFont = Content.Load<SpriteFont>("EndGameFont");
             blockManager = new BlockGenerator();
             blockMovement = new BlockMovement();
-            keyboardInputs = new KeyboardInputs(blockMovement);
+            blockRotation = new BlockRotation();
+            blockRotation.Rotated += BlockRotation_Rotated;
+            keyboardInputs = new KeyboardInputs(blockMovement, blockRotation);
             blockMovement.BlockStoped += BlockMovement_BlockStoped;
             blockMovement.BlockMoved += BlockMovement_BlockMoved;
             rowsManager = new RowsManager();
             hitboxManager = new HitboxManager();
             rowsManager.RowFilled += RowsManager_RowFilled;
             rowsManager.GameEnded += RowsManager_GameEnded;
+        }
+
+        private void BlockRotation_Rotated(object sender, BlockModel e)
+        {
+            rotate = false;
         }
 
         private void BlockMovement_BlockMoved(object sender, string e)
@@ -206,8 +213,6 @@ namespace TetrisMono
                 moveDown = true;
             if (!Keyboard.GetState().IsKeyDown(Keys.W))
                 rotate = true;
-            if (!Keyboard.GetState().IsKeyDown(Keys.Enter))
-                restart = true;
             if (!Keyboard.GetState().IsKeyDown(Keys.Space))
                 dropDown = true;
         }
@@ -231,20 +236,14 @@ namespace TetrisMono
             {
                 nextBlock = blockManager.GenerateRandomBlock();
             }
-            activeBlock = nextBlock;
-            activeBlock.Rotated += ActiveBlock_Rotated;
+            activeBlock = nextBlock;            
             activeBlock.ChangePositionOn(25 + 4 * 40, startingY);
             nextBlock = blockManager.GenerateRandomBlock();
             nextBlock.ChangePositionOn(graphics.PreferredBackBufferWidth - nextBlockSize - space, space);
             SetNextSprite(nextBlock.Type);
 
 
-        }
-
-        private void ActiveBlock_Rotated(object sender, EventArgs e)
-        {
-            rotate = false;
-        }
+        }        
 
         private void SetNextSprite(BlockType type)
         {

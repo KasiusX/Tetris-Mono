@@ -47,8 +47,6 @@ namespace TetrisLibrary
         public Color Color { get; set; }
         public int RotationForm { get; set; } = 1;
 
-        public event EventHandler Rotated;
-
         public BlockModel(BlockType type, Color color, int width, int height)
         {
             Type = type;
@@ -87,17 +85,6 @@ namespace TetrisLibrary
             }
         }
 
-        private bool CheckIfIsOutside()
-        {
-            for(int i = 0; i < Hitbox.Count; i++)
-            {
-                if (Hitbox[i].X >= 400)
-                {
-                    return true;                  
-                }
-            }
-            return false;
-        }
         //foreach rectengle in Hitbox checked if it is above the row that was deleted if yes it move it down
         public void DropDownRectangles(int rowY)
         {
