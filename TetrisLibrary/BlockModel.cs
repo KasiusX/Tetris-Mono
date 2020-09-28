@@ -57,30 +57,8 @@ namespace TetrisLibrary
             Height = height;
             HitboxManager manager = new HitboxManager();
             Hitbox = manager.GetHitBoxes(this);
-        } 
-        
-        private bool ColideWithSomething(List<BlockModel> droppedBlocks)
-        {
-            foreach (BlockModel block in droppedBlocks)
-            {
-                if (block.DoesColideWithBlockHitbox(Hitbox))
-                    return true;
-            }
-            return false;
-        }
-
-        private bool DoesColideWithBlockHitbox(List<Rectangle> hitbox)
-        {
-            foreach (Rectangle thisRectangleHitbox in Hitbox)
-            {
-                foreach (Rectangle newRectangleHitbox in hitbox)
-                {
-                    if (thisRectangleHitbox.Intersects(newRectangleHitbox))
-                        return true;
-                }
-            }
-            return false;
-        }
+        }        
+                
         public void ChangePositionOn(int x, int y)
         {
             X = x;
@@ -107,49 +85,6 @@ namespace TetrisLibrary
                 rectangleToMove.X += moveX;
                 Hitbox[i] = rectangleToMove;
             }
-        }        
-
-
-        public bool DoesColideWithDroppedBlocks(List<BlockModel> droppedBlocks)
-        {
-            foreach (BlockModel droppedBlock in droppedBlocks)
-            {
-                if (droppedBlock.DoesColideWithBlockHitbox(Hitbox))
-                    return true;
-            }
-            return false;
-        }
-
-        public void Rotate(HitboxManager manager, List<BlockModel> droppedBlocks)
-        {
-            BlockModel backup = this;
-            int x = X;
-            int y = Y;
-            ChangePositionOn(0, 0);
-            manager.RotateHitBox(this);
-            Rotated.Invoke(this, EventArgs.Empty);
-
-            ChangePositionOn(x, y);
-            SwitchWideHeight();
-            CheckIfIsOutside();
-
-            if (ColideWithSomething(droppedBlocks))
-                LoadBackup(backup);
-        }
-
-        private void LoadBackup(BlockModel backup)
-        {
-            X = backup.X;
-            Y = backup.Y;
-            Hitbox = backup.Hitbox;
-            RotationForm = backup.RotationForm;
-        }        
-
-        private void SwitchWideHeight()
-        {
-            int width = Width;
-            Width = Height;
-            Height = width;
         }
 
         private bool CheckIfIsOutside()

@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockColider.cs" />
     <Compile Include="BlockGenerator.cs" />
     <Compile Include="BlockModel.cs" />
     <Compile Include="BlockMovement.cs" />
+    <Compile Include="BlockRotation.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="HitboxManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
