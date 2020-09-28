@@ -50,6 +50,7 @@
     <Compile Include="BlockRotation.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="HitboxManager.cs" />
+    <Compile Include="KeyboardInputs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RowsManager.cs" />
   </ItemGroup>
