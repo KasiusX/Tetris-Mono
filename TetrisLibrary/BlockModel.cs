@@ -107,7 +107,8 @@ namespace TetrisLibrary
                 rectangleToMove.X += moveX;
                 Hitbox[i] = rectangleToMove;
             }
-        }
+        }        
+
 
         public bool DoesColideWithDroppedBlocks(List<BlockModel> droppedBlocks)
         {
