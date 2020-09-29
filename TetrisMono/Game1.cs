@@ -26,9 +26,6 @@ namespace TetrisMono
 
         BlockModel activeBlock;
         BlockModel nextBlock;
-        BlockGenerator blockManager;
-        BlockRotation blockRotation;
-        BlockMovement blockMovement;
         KeyboardInputs keyboardInputs;
         RowsManager rowsManager;
         HitboxManager hitboxManager;
@@ -67,13 +64,10 @@ namespace TetrisMono
             blockSprite = Content.Load<Texture2D>("square-sprite");
             gameFont = Content.Load<SpriteFont>("game-font");
             endGameFont = Content.Load<SpriteFont>("EndGameFont");
-            blockManager = new BlockGenerator();
-            blockMovement = new BlockMovement();
-            blockRotation = new BlockRotation();
-            blockRotation.Rotated += BlockRotation_Rotated;
-            keyboardInputs = new KeyboardInputs(blockMovement, blockRotation);
-            blockMovement.BlockStoped += BlockMovement_BlockStoped;
-            blockMovement.BlockMoved += BlockMovement_BlockMoved;
+            BlockRotation.Rotated += BlockRotation_Rotated;
+            keyboardInputs = new KeyboardInputs();
+            BlockMovement.BlockStoped += BlockMovement_BlockStoped;
+            BlockMovement.BlockMoved += BlockMovement_BlockMoved;
             rowsManager = new RowsManager();
             hitboxManager = new HitboxManager();
             rowsManager.RowFilled += RowsManager_RowFilled;
@@ -132,7 +126,7 @@ namespace TetrisMono
                 }
                 if (secondOfMoveDown != gameTime.TotalGameTime.Seconds)
                 {
-                    blockMovement.MoveBlockDown(droppedBlocks,activeBlock);
+                    activeBlock.MoveBlockDown(droppedBlocks);
                     secondOfMoveDown = gameTime.TotalGameTime.Seconds;
                 }
 
@@ -234,11 +228,11 @@ namespace TetrisMono
             }
             else
             {
-                nextBlock = blockManager.GenerateRandomBlock();
+                nextBlock = BlockGenerator.GenerateRandomBlock();
             }
             activeBlock = nextBlock;            
             activeBlock.ChangePositionOn(25 + 4 * 40, startingY);
-            nextBlock = blockManager.GenerateRandomBlock();
+            nextBlock = BlockGenerator.GenerateRandomBlock();
             nextBlock.ChangePositionOn(graphics.PreferredBackBufferWidth - nextBlockSize - space, space);
             SetNextSprite(nextBlock.Type);
 

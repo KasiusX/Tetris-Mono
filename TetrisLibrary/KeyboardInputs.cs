@@ -9,29 +9,21 @@ using System.Threading.Tasks;
 namespace TetrisLibrary
 {
     public class KeyboardInputs
-    {
-        BlockMovement blockMovement;
-        BlockRotation blockRotation;
-
-        public KeyboardInputs(BlockMovement movement, BlockRotation rotation)
-        {
-            blockMovement = movement;
-            blockRotation = rotation;
-        }
+    {           
         public void CheckForMove(KeyboardState state, BlockModel blockToMove, List<BlockModel> droppedBlocks, bool moveLeft, bool moveRight, bool moveDown)
         {
             if (state.IsKeyDown(Keys.A) && blockToMove.X > 25 && moveLeft)
             {
-                blockMovement.MoveBlockLeft(droppedBlocks, blockToMove);
+                blockToMove.MoveBlockLeft(droppedBlocks);
             }
             if ((state.IsKeyDown(Keys.D) && blockToMove.X + blockToMove.Width < 425) && moveRight)
             {
-                blockMovement.MoveBlockRight(droppedBlocks, blockToMove);
+                blockToMove.MoveBlockRight(droppedBlocks);
 
             }
             if (state.IsKeyDown(Keys.S) && moveDown)
             {
-                blockMovement.MoveBlockDown(droppedBlocks, blockToMove);
+                blockToMove.MoveBlockDown(droppedBlocks);
             }
         }        
 
@@ -39,7 +31,7 @@ namespace TetrisLibrary
         {
             if (state.IsKeyDown(Keys.W) && rotate && blockToRotate != null)
             {
-                blockRotation.RotateBlock(manager, droppedBlocks, blockToRotate);
+                blockToRotate.RotateBlock(manager, droppedBlocks);
             }
         }
 
@@ -47,7 +39,7 @@ namespace TetrisLibrary
         {
             if (state.IsKeyDown(Keys.Space) && dropDown && blockToMove != null)
             {
-                blockMovement.MoveBlockAbsoluteDown(droppedBlocks, blockToMove);
+                blockToMove.MoveBlockAbsoluteDown(droppedBlocks);
             }
 
         }

@@ -32,5 +32,17 @@ namespace TetrisLibrary
             }
             return false;
         }
+
+        public static bool IsAwayFromField(this BlockModel block)
+        {
+            for (int i = 0; i < block.Hitbox.Count; i++)
+            {
+                if(block.Hitbox[i].X >= 425)
+                {
+                    return true;
+                } 
+            }
+            return false;
+        }
     }
 }

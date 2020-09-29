@@ -3,11 +3,11 @@ using System;
 
 namespace TetrisLibrary
 {
-    public class BlockGenerator
+    public static class BlockGenerator
     {
-        Random random = new Random();
+        static Random random = new Random();
                 
-        public BlockModel GenerateRandomBlock()
+        public static BlockModel GenerateRandomBlock()
         {
            char choice = char.Parse(random.Next(7).ToString());
             switch (choice)

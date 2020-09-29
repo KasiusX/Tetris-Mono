@@ -84,22 +84,5 @@ namespace TetrisLibrary
                 Hitbox[i] = rectangleToMove;
             }
         }
-
-        //foreach rectengle in Hitbox checked if it is above the row that was deleted if yes it move it down
-        public void DropDownRectangles(int rowY)
-        {
-            for (int i = 0; i < Hitbox.Count; i++)
-            {
-                Rectangle rectangleHitboxToDrop = Hitbox[i];
-                if (rectangleHitboxToDrop.Y < rowY)
-                {
-                    rectangleHitboxToDrop.Y += SquareWidth;
-                }
-                Hitbox[i] = rectangleHitboxToDrop;
-            }  
-
-        }
-
-        
     }
 }

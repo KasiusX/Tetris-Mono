@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+ 
 namespace TetrisLibrary
 {
-    public class BlockRotation
+    public static class BlockRotation
     {
-        public event EventHandler<BlockModel> Rotated;
-        public void RotateBlock(HitboxManager manager, List<BlockModel> droppedBlocks, BlockModel blockToRotation)
+        public static event EventHandler<BlockModel> Rotated;
+        public static void RotateBlock(this BlockModel blockToRotation,HitboxManager manager, List<BlockModel> droppedBlocks)
         {
             BlockModel backup = blockToRotation;
             int x = blockToRotation.X;
@@ -20,13 +17,17 @@ namespace TetrisLibrary
             blockToRotation.ChangePositionOn(x, y);
 
             SwitchWideHeight(blockToRotation);
-            Rotated.Invoke(this, blockToRotation);
+            while(blockToRotation.IsAwayFromField())
+            {
+                blockToRotation.MoveBlockLeft(droppedBlocks);
+            }
+            Rotated.Invoke(null, blockToRotation);
 
             if (blockToRotation.DoesColideWithDroppedBlocks(droppedBlocks))
                LoadBackup(backup, blockToRotation);                        
         }
 
-        private void LoadBackup(BlockModel backup,BlockModel blockToRotation)
+        private static void LoadBackup(BlockModel backup,BlockModel blockToRotation)
         {
             blockToRotation.X = backup.X;
             blockToRotation.Y = backup.Y;
@@ -34,7 +35,7 @@ namespace TetrisLibrary
             blockToRotation.RotationForm = backup.RotationForm;
         }
 
-        private void SwitchWideHeight(BlockModel blockToRotation)
+        private static void SwitchWideHeight(BlockModel blockToRotation)
         {
             int width = blockToRotation.Width;
             blockToRotation.Width = blockToRotation.Height;
